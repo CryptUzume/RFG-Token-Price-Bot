@@ -11,10 +11,16 @@
   "license": "ISC",
   "dependencies": {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> d6741b2 (Initial commit for RFG Bot)
     "@types/node": "^22.13.11",
     "discord.js": "^14.21.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0"
+<<<<<<< HEAD
 
+=======
+>>>>>>> d6741b2 (Initial commit for RFG Bot)
   }
 }
