@@ -61,7 +61,16 @@ const updateStatus = async () => {
   console.log("✅ ステータス更新: $", data.pair.priceUsd);
 };
 
+let lastNotifyTime = 0;
+const NOTIFY_INTERVAL = 6 * 60 * 60 * 1000; // 6時間
+
 const boardcast = async () => {
+  const now = Date.now();
+  if (now - lastNotifyTime < NOTIFY_INTERVAL) {
+    console.log("⏸️ 通知スキップ：まだ6時間経っていません");
+    return;
+  }
+
   console.log("📢 boardcast 開始");
   const data = await fetchPairData();
   if (!data?.pair?.priceUsd) {
@@ -76,6 +85,8 @@ const boardcast = async () => {
   } else {
     await _boardcastEmbed(channelIds, data);
   }
+
+  lastNotifyTime = now;
 };
 
 const _boardcastEmbed = async (channelIds, data) => {
@@ -87,7 +98,7 @@ const _boardcastEmbed = async (channelIds, data) => {
         .setURL(`https://dexscreener.com/${process.env.CHAIN}/${process.env.PAIR_HASH}`)
         .setAuthor({
           name: '価格通知Bot',
-          iconURL: 'https://media.discordapp.net/attachments/1243501933155717130/1398544287767203840/Tadokami_Tips_5.png?format=webp&quality=lossless&width=721&height=541'
+          iconURL: 'https://media.discordapp.net/attachments/1243501933155717130/1398544287767203840/Tadokami_Tips_5.png?ex=6885bf5d&is=68846ddd&hm=2b8568fec06db9ea39df557ad93a99070310a98493192df14b0d8e33f6586343&=&format=webp&quality=lossless&width=721&height=541'
         })
         .setDescription('現在のRFG価格をお知らせします')
         .addFields(
@@ -132,7 +143,7 @@ const _boardcastText = async (channelIds, data) => {
 client.once("ready", async () => {
   console.log(`🚀 Bot 起動成功: ${client.user.tag}`);
   await registTask();
-  await doTask();  // 🔸 即時実行
+  await doTask();  // 即時実行（通知は制御される）
   const interval = Number(process.env.UPDATE_FREQUENCY);
   console.log(`⏳ ${interval}ms ごとにdoTaskを実行します`);
   setInterval(doTask, interval);
